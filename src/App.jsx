@@ -1,9 +1,7 @@
-import './App.css';
-
 function App() {
   return (
     <div className="App">
-      <p>Homekit log</p>
+      <h1>Homekit log</h1>
     </div>
   );
 }
