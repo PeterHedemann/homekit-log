@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Pagination from "./components/Pagination";
 import Table from "./components/Table";
 
 function App() {
@@ -107,25 +108,44 @@ function App() {
     ["Minna", "Stiff", "mstiff2r@fema.gov"]
   ]);
   const [displayedRows, setDisplayedRows] = useState([]);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const sortingDidChange = () => {
+  const displayedDataShouldChange = () => {
+    let displayedRows;
+
+    // First we sort the rows (if sorting is set)
     if (sortedColumnIndex === null) {
-      setDisplayedRows(rows);
-      return;
+      displayedRows = [...rows];
+    } else {
+      const newSorting = [...rows];
+      const sortDirection = sortedAscending ? 1 : -1;
+      newSorting.sort((a, b) =>
+        a[sortedColumnIndex] > b[sortedColumnIndex]
+          ? sortDirection
+          : -1 * sortDirection
+      );
+      displayedRows = newSorting;
     }
 
-    const newSorting = [...rows];
-    const sortDirection = sortedAscending ? 1 : -1;
-    newSorting.sort((a, b) =>
-      a[sortedColumnIndex] > b[sortedColumnIndex]
-        ? sortDirection
-        : -1 * sortDirection
-    );
+    // Lastly we slice out the items needed for the current page
+    if (rows.length > itemsPerPage) {
+      displayedRows = displayedRows.slice(
+        (currentPage - 1) * itemsPerPage,
+        (currentPage - 1) * itemsPerPage + itemsPerPage
+      );
+    }
 
-    setDisplayedRows(newSorting);
+    setDisplayedRows(displayedRows);
   };
 
-  useEffect(sortingDidChange, [rows, sortedAscending, sortedColumnIndex]);
+  useEffect(displayedDataShouldChange, [
+    rows,
+    sortedAscending,
+    sortedColumnIndex,
+    currentPage,
+    itemsPerPage
+  ]);
 
   const handleSortColumnClicked = (clickedIndex) => {
     if (clickedIndex !== sortedColumnIndex) {
@@ -135,6 +155,12 @@ function App() {
       setSortedAscending(!sortedAscending);
     }
   };
+
+  useEffect(() => {
+    if (itemsPerPage * currentPage > rows.length) {
+      setCurrentPage(Math.ceil(rows.length / itemsPerPage));
+    }
+  }, [itemsPerPage, rows]);
 
   return (
     <>
@@ -146,6 +172,15 @@ function App() {
         sortedColumnIndex={sortedColumnIndex}
         sortedAscending={sortedAscending}
         onSortableColumnClicked={handleSortColumnClicked}
+      />
+      <Pagination
+        totalNumberOfItems={rows.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPagingChanged={(e) => {
+          setItemsPerPage(e.itemsPerPage);
+          setCurrentPage(e.currentPage);
+        }}
       />
     </>
   );
