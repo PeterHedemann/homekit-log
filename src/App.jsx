@@ -137,8 +137,8 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Homekit log</h1>
+    <>
+      <h1>Table test</h1>
       <Table
         headers={["Fornavn", "Efternavn", "Email"]}
         rows={displayedRows}
@@ -147,7 +147,7 @@ function App() {
         sortedAscending={sortedAscending}
         onSortableColumnClicked={handleSortColumnClicked}
       />
-    </div>
+    </>
   );
 }
 
