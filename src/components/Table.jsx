@@ -21,10 +21,10 @@ const Table = ({ headers, rows, sortableColumns, onSortableColumnClicked }) => {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row, index) => (
-          <tr key={index}>
+        {rows.map((row, rowIndex) => (
+          <tr key={rowIndex}>
             {row.map((cell, index) => (
-              <td key={index}>{cell}</td>
+              <td key={`${rowIndex}_${index}`}>{cell}</td>
             ))}
           </tr>
         ))}
