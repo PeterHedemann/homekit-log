@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
+import "./Table.css";
 
 const Table = ({ headers, rows, sortableColumns, onSortableColumnClicked }) => {
   return (
