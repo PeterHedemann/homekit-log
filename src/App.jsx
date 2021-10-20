@@ -4,7 +4,7 @@ import Table from "./components/Table";
 function App() {
   const [sortedAscending, setSortedAscending] = useState(true);
   const [sortedColumnIndex, setSortedColumnIndex] = useState(null);
-  const [rows, setRows] = useState([
+  const [rows] = useState([
     ["Hughie", "Fice", "hfice0@yolasite.com"],
     ["Graig", "Hallibone", "ghallibone1@bloglovin.com"],
     ["Etan", "St. Aubyn", "estaubyn2@paginegialle.it"],
@@ -106,23 +106,26 @@ function App() {
     ["Rhodie", "Rylstone", "rrylstone2q@arizona.edu"],
     ["Minna", "Stiff", "mstiff2r@fema.gov"]
   ]);
+  const [displayedRows, setDisplayedRows] = useState([]);
 
-  useEffect(() => {
+  const sortingDidChange = () => {
     if (sortedColumnIndex === null) {
+      setDisplayedRows(rows);
       return;
     }
 
-    const unsortedRows = [...rows];
+    const newSorting = [...rows];
     const sortDirection = sortedAscending ? 1 : -1;
-    unsortedRows.sort((a, b) =>
+    newSorting.sort((a, b) =>
       a[sortedColumnIndex] > b[sortedColumnIndex]
         ? sortDirection
         : -1 * sortDirection
     );
 
-    setRows(unsortedRows);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedAscending, sortedColumnIndex]);
+    setDisplayedRows(newSorting);
+  };
+
+  useEffect(sortingDidChange, [rows, sortedAscending, sortedColumnIndex]);
 
   const handleSortColumnClicked = (clickedIndex) => {
     if (clickedIndex !== sortedColumnIndex) {
@@ -138,7 +141,7 @@ function App() {
       <h1>Homekit log</h1>
       <Table
         headers={["Fornavn", "Efternavn", "Email"]}
-        rows={rows}
+        rows={displayedRows}
         sortableColumns={[0, 1]}
         sortedColumnIndex={sortedColumnIndex}
         sortedAscending={sortedAscending}
